@@ -1,4 +1,4 @@
-module openapi2conv
+module gitlab.ctcmedia.ru/MoreTV/go-openapi-converter
 
 go 1.18
 
