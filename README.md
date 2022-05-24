@@ -20,7 +20,7 @@ $ go-openapi-converter source_file destination_file
 All you need is to get [Golang](https://go.dev) and [git](https://git-scm.com/).
 
 ```bash
-$ git clone gitlab.ctcmedia.ru/MoreTV/go-openapi-converter
+$ git clone github.com/amka/go-openapi-converter
 $ cd go-openapi-converter
 $ go build go-openapi-converter
 ```
