@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -13,18 +14,24 @@ import (
 )
 
 func Execute() {
+	var outputType string
+
 	var rootCmd = &cobra.Command{
-		Use:   "openapi2conv <input.json> <output.yaml>",
-		Short: "Gopher CLI in Go",
-		Long:  `Gopher CLI application written in Go.`,
-		Args:  cobra.MinimumNArgs(2),
+		Use:   "go-openapi-converter input_file [output_file]",
+		Short: "OpenApi 2 to 3",
+		Long:  `Convert OpenApi 2 to OpenApi 3`,
+		Args:  cobra.MinimumNArgs(1),
 		// Uncomment the following line if your bare application
 		// has an action associated with it:
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Print: " + strings.Join(args, " "))
-			convert(args[0], args[1])
+			if len(args) == 1 {
+				convert(args[0], "", outputType)
+			} else {
+				convert(args[0], args[1], outputType)
+			}
 		},
 	}
+	rootCmd.PersistentFlags().StringVar(&outputType, "type", "json", "Output file type (yaml|json)")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -32,8 +39,20 @@ func Execute() {
 	}
 }
 
-func convert(input_json, output_yaml string) {
-	input, err := os.ReadFile(input_json)
+// Convert converts a JSON file to a YAML file.
+// `inputPath` is the path to the JSON file.
+// `outputPath` is the path to the YAML file. If no `outputPath` is specified,
+// the output is printed to stdout.
+// `outputType` is the output file type, it could be `json` or `yaml`.
+func convert(inputPath, outputPath, outputType string) {
+
+	// Resolve filename
+	inputFilepath, err := filepath.Abs(inputPath)
+	if err != nil {
+		panic(err)
+	}
+
+	input, err := os.ReadFile(inputFilepath)
 	if err != nil {
 		panic(err)
 	}
@@ -43,6 +62,7 @@ func convert(input_json, output_yaml string) {
 		panic(err)
 	}
 
+	// Validate the document
 	outputJSON, err := json.Marshal(doc)
 	if err != nil {
 		panic(err)
@@ -55,22 +75,40 @@ func convert(input_json, output_yaml string) {
 		fmt.Println("objects doc & docAgainFromJSON should be the same")
 	}
 
-	outputYAML, err := yaml.Marshal(doc)
-	if err != nil {
-		panic(err)
-	}
-	var docAgainFromYAML openapi2.T
-	if err = yaml.Unmarshal(outputYAML, &docAgainFromYAML); err != nil {
-		panic(err)
-	}
-	if !reflect.DeepEqual(doc, docAgainFromYAML) {
-		fmt.Println("objects doc & docAgainFromYAML should be the same")
+	var outputBytes []byte
+
+	// Detect what kind of file we are converting to
+	if outputType == "yaml" {
+		outputBytes, err = yaml.Marshal(doc)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		// outputType = "json"
+		outputBytes, err = json.Marshal(doc)
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	// Write outputYAML to file
-	if err := os.WriteFile(output_yaml, outputYAML, 0644); err != nil {
-		panic(err)
-	}
+	// var docAgainFromYAML openapi2.T
+	// if err = yaml.Unmarshal(outputBytes, &docAgainFromYAML); err != nil {
+	// 	panic(err)
+	// }
+	// if !reflect.DeepEqual(doc, docAgainFromYAML) {
+	// 	fmt.Println("objects doc & docAgainFromYAML should be the same")
+	// }
 
-	fmt.Print("Successfully converted " + input_json + " to " + output_yaml)
+	if len(outputPath) == 0 {
+		fmt.Print(string(outputBytes))
+	} else {
+		// Write outputBytes to file
+		if !strings.HasSuffix(outputPath, "."+outputType) {
+			outputPath = outputPath + "." + outputType
+		}
+
+		if err := os.WriteFile(outputPath, outputBytes, 0644); err != nil {
+			panic(err)
+		}
+	}
 }
