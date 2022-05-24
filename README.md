@@ -1,15 +1,21 @@
-# Go Openapi converte
+#  Go OpenApi converter
 
-Helps you to convert OpenAPI files from version 2 to 3.
+It helps you to convert OpenAPI files from version 2 to 3.
 
 ## Usage
 
+Install with `go install`:
+
 ```bash
 $ go install github.com/amka/go-openapi-converter@latest
+```
+
+and run it with cli command:
+```bash
 $ go-openapi-converter source_file destination_file
 ```
 
-## Hacking
+## 🛠 Hacking
 
 All you need is to get [Golang](https://go.dev) and [git](https://git-scm.com/).
 
@@ -19,12 +25,12 @@ $ cd go-openapi-converter
 $ go build openapi2conv
 ```
 
-## Contribution
+##  Contribution
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
 
-## Licensing
+## 🪪 Licensing
 
 Distributed under the MIT License. See LICENSE.txt for more information.
 
