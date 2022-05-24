@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func main() {
+func Execute() {
 	var rootCmd = &cobra.Command{
 		Use:   "openapi2conv <input.json> <output.yaml>",
 		Short: "Gopher CLI in Go",
