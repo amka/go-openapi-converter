@@ -1,4 +1,4 @@
-package openapi2conv
+package main
 
 import (
 	"encoding/json"
