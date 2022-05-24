@@ -2,7 +2,7 @@
 
 It helps you to convert OpenAPI files from version 2 to 3.
 
-## Usage
+## 🧑‍💻 Usage
 
 Install with `go install`:
 
@@ -22,15 +22,13 @@ All you need is to get [Golang](https://go.dev) and [git](https://git-scm.com/).
 ```bash
 $ git clone gitlab.ctcmedia.ru/MoreTV/go-openapi-converter
 $ cd go-openapi-converter
-$ go build openapi2conv
+$ go build go-openapi-converter
 ```
 
-##  Contribution
+## 👨‍🎨 Contribution
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-
-## 🪪 Licensing
+## 💳 Licensing
 
 Distributed under the MIT License. See LICENSE.txt for more information.
-
