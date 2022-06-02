@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi2"
+	"github.com/getkin/kin-openapi/openapi2conv"
 	"github.com/ghodss/yaml"
 	"github.com/spf13/cobra"
 )
@@ -62,8 +63,10 @@ func convert(inputPath, outputPath, outputType string) {
 		panic(err)
 	}
 
+	convertedDoc, err := openapi2conv.ToV3(&doc)
+
 	// Validate the document
-	outputJSON, err := json.Marshal(doc)
+	outputJSON, err := json.Marshal(convertedDoc)
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +74,7 @@ func convert(inputPath, outputPath, outputType string) {
 	if err = json.Unmarshal(outputJSON, &docAgainFromJSON); err != nil {
 		panic(err)
 	}
-	if !reflect.DeepEqual(doc, docAgainFromJSON) {
+	if !reflect.DeepEqual(convertedDoc, docAgainFromJSON) {
 		fmt.Println("objects doc & docAgainFromJSON should be the same")
 	}
 
@@ -79,25 +82,17 @@ func convert(inputPath, outputPath, outputType string) {
 
 	// Detect what kind of file we are converting to
 	if outputType == "yaml" {
-		outputBytes, err = yaml.Marshal(doc)
+		outputBytes, err = yaml.Marshal(convertedDoc)
 		if err != nil {
 			panic(err)
 		}
 	} else {
 		// outputType = "json"
-		outputBytes, err = json.Marshal(doc)
+		outputBytes, err = json.Marshal(convertedDoc)
 		if err != nil {
 			panic(err)
 		}
 	}
-
-	// var docAgainFromYAML openapi2.T
-	// if err = yaml.Unmarshal(outputBytes, &docAgainFromYAML); err != nil {
-	// 	panic(err)
-	// }
-	// if !reflect.DeepEqual(doc, docAgainFromYAML) {
-	// 	fmt.Println("objects doc & docAgainFromYAML should be the same")
-	// }
 
 	if len(outputPath) == 0 {
 		fmt.Print(string(outputBytes))
